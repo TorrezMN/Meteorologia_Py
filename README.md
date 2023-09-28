@@ -1,1 +1,4 @@
-# Meteorolog-a_Py
+# Meteorologia_Py
+
+
+- BASE URL = https://www.meteorologia.gov.py/pronostico/
