@@ -25,7 +25,6 @@ def get_current_month_and_year():
 def get_data():
     """Gets page content."""
     response = requests.get(base_url, headers=headers)
-    #  return response.text
     return response.content
 
 
@@ -60,16 +59,20 @@ def make_row(row):
     r["data"]["pronostico"] = {}
 
     for i in pron_boxes:
-        pron_date = i.find("div", {"class": "col-md-9 col-sm-10"}).find("h5").text
-        pron_content = i.find("div", {"class": "pronostico--content"}).text
         pron_temps = i.findAll("div", {"class": "col-sm-3 col-xs-4"})
-        r["data"]["pronostico"]["date"] = pron_date
-        r["data"]["pronostico"]["content"] = pron_content
-        r["data"]["pronostico"]["temperatures"] = {}
+        box_base = i.find("div", {"class": "col-md-9 col-sm-10"})
+        r["data"]["pronostico"]["pron"] = {}
+        r["data"]["pronostico"]["pron"] = {}
+        r["data"]["pronostico"]["pron"]["date"] = {}
+        r["data"]["pronostico"]["pron"]["date"]["text_date"] = box_base.find("h5").text
+        r["data"]["pronostico"]["pron"]["date"]["content"] = box_base.find(
+            "div", {"class": "pronostico--content"}
+        ).text
+        r["data"]["pronostico"]["pron"]["temperatures"] = {}
 
         for i in pron_temps:
             temps = i.text.split()
-            r["data"]["pronostico"]["temperatures"][temps[0]] = temps[1]
+            r["data"]["pronostico"]["pron"]["temperatures"][temps[0]] = temps[1]
 
     append_data_to_json_file(r, get_current_month_and_year())
 
@@ -83,7 +86,7 @@ def parse_results():
     for i in data:
         make_row(i)
         #  print(i)
-        #  break
+        break
 
 
 def append_data_to_json_file(new_data, filename):
