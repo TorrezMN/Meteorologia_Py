@@ -56,9 +56,9 @@ def make_row(row):
     r["data"] = {}
     r["data"]["origen"] = orig[1]
     r["data"]["last_update"] = orig[2]
-    r["data"]["pronostico"] = []
 
     for i in pron_boxes:
+        r["data"]["pron_data"] = []
         box_base = i.find("div", {"class": "col-md-9 col-sm-10"})
         pron_temps = i.findAll("div", {"class": "col-sm-3 col-xs-4"})
         pron_box = {}
@@ -74,7 +74,8 @@ def make_row(row):
             temps = i.text.split()
             pron_box["temperatures"][temps[0]] = temps[1]
 
-            r["data"]["pronostico"].append(pron_box)
+        r["data"]["pron_data"].append(pron_box)
+
     #  Append data to file.
     append_data_to_json_file(r, get_current_month_and_year())
 
@@ -88,7 +89,7 @@ def parse_results():
     for i in data:
         make_row(i)
         #  print(i)
-        break
+        #  break
 
 
 def append_data_to_json_file(new_data, filename):
