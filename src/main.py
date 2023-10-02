@@ -86,7 +86,7 @@ def parse_results():
     for i in data:
         make_row(i)
         #  print(i)
-        break
+        #  break
 
 
 def append_data_to_json_file(new_data, filename):
