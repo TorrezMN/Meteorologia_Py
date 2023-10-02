@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # Author: Torrez, Milton N.
 
+import json
 import requests
 from bs4 import BeautifulSoup
 import datetime
@@ -13,10 +14,19 @@ headers = {
 }
 
 
+def get_current_month_and_year():
+    """Returns the current month and year in the format year-month."""
+    now = datetime.datetime.now()
+    month = now.month
+    year = now.year
+    return f"{year}-{month:02d}"
+
+
 def get_data():
     """Gets page content."""
     response = requests.get(base_url, headers=headers)
-    return response.text
+    #  return response.text
+    return response.content
 
 
 def get_current_date():
@@ -32,14 +42,37 @@ def get_current_time():
 
 
 def make_row(row):
-    title = row.find("h4", {"class": "pronostico--title"}).text.split("\n")
-    r = {
-        "running_date": get_current_date(),
-        "running_time": get_current_time(),
-        "origin": title[1],
-        "updated": title[2],
-    }
-    print(r)
+    """Function that builds the row."""
+    r = {}
+    orig = row.find("h4", {"class": "pronostico--title"}).text.split("\n")
+    temps = row.findAll("div", class_="col-sm-3 col-xs-4")
+    pron_boxes = row.findAll("div", class_="col-md-4")
+
+    #  DEBUG INFO
+    r["debug_info"] = {}
+    r["debug_info"]["running_date"] = get_current_date()
+    r["debug_info"]["running_time"] = get_current_time()
+
+    #  DATA
+    r["data"] = {}
+    r["data"]["origen"] = orig[1]
+    r["data"]["last_update"] = orig[2]
+    r["data"]["pronostico"] = {}
+
+    for i in pron_boxes:
+        pron_date = i.find("div", {"class": "col-md-9 col-sm-10"}).find("h5").text
+        pron_content = i.find("div", {"class": "pronostico--content"}).text
+        pron_temps = i.findAll("div", {"class": "col-sm-3 col-xs-4"})
+        r["data"]["pronostico"]["date"] = pron_date
+        r["data"]["pronostico"]["content"] = pron_content
+        r["data"]["pronostico"]["temperatures"] = {}
+
+    #  print(pron_temps)
+    for i in pron_temps:
+        temps = i.text.split()
+        r["data"]["pronostico"]["temperatures"][temps[0]] = temps[1]
+
+    append_data_to_json_file(r, get_current_month_and_year())
 
 
 def parse_results():
@@ -50,7 +83,36 @@ def parse_results():
     data = [i for i in pron[1] if len(i) == 9]
     for i in data:
         make_row(i)
-        break
+        #  print(i)
+        #  break
+
+
+def append_data_to_json_file(new_data, filename):
+    """Appends data to a JSON file, creating the file if it does not exist.
+
+    Args:
+    new_data: The data to append to the file.
+    filename: The path to the JSON file.
+    """
+
+    try:
+        # Open the file in reading and writing mode.
+        with open(f"data/{filename}", "r+") as f:
+            # Load the existing data from the file.
+            existing_data = json.load(f)
+
+            # Append the new data to the existing data.
+            existing_data.append(new_data)
+
+            # Seek to the beginning of the file.
+            f.seek(0)
+
+            # Write the updated data to the file.
+            json.dump(existing_data, f)
+    except FileNotFoundError:
+        # Create the file if it does not exist.
+        with open(f"data/{filename}", "w") as f:
+            json.dump([new_data], f)
 
 
 if __name__ == "__main__":
