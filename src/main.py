@@ -56,24 +56,26 @@ def make_row(row):
     r["data"] = {}
     r["data"]["origen"] = orig[1]
     r["data"]["last_update"] = orig[2]
-    r["data"]["pronostico"] = {}
+    r["data"]["pronostico"] = []
 
     for i in pron_boxes:
-        pron_temps = i.findAll("div", {"class": "col-sm-3 col-xs-4"})
         box_base = i.find("div", {"class": "col-md-9 col-sm-10"})
-        r["data"]["pronostico"]["pron"] = {}
-        r["data"]["pronostico"]["pron"] = {}
-        r["data"]["pronostico"]["pron"]["date"] = {}
-        r["data"]["pronostico"]["pron"]["date"]["text_date"] = box_base.find("h5").text
-        r["data"]["pronostico"]["pron"]["date"]["content"] = box_base.find(
+        pron_temps = i.findAll("div", {"class": "col-sm-3 col-xs-4"})
+        pron_box = {}
+
+        #  Pronostic box.
+        pron_box["text_date"] = box_base.find("h5").text
+        pron_box["pron_content"] = box_base.find(
             "div", {"class": "pronostico--content"}
         ).text
-        r["data"]["pronostico"]["pron"]["temperatures"] = {}
+        pron_box["temperatures"] = {}
 
         for i in pron_temps:
             temps = i.text.split()
-            r["data"]["pronostico"]["pron"]["temperatures"][temps[0]] = temps[1]
+            pron_box["temperatures"][temps[0]] = temps[1]
 
+            r["data"]["pronostico"].append(pron_box)
+    #  Append data to file.
     append_data_to_json_file(r, get_current_month_and_year())
 
 
@@ -86,7 +88,7 @@ def parse_results():
     for i in data:
         make_row(i)
         #  print(i)
-        #  break
+        break
 
 
 def append_data_to_json_file(new_data, filename):
