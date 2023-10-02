@@ -67,10 +67,9 @@ def make_row(row):
         r["data"]["pronostico"]["content"] = pron_content
         r["data"]["pronostico"]["temperatures"] = {}
 
-    #  print(pron_temps)
-    for i in pron_temps:
-        temps = i.text.split()
-        r["data"]["pronostico"]["temperatures"][temps[0]] = temps[1]
+        for i in pron_temps:
+            temps = i.text.split()
+            r["data"]["pronostico"]["temperatures"][temps[0]] = temps[1]
 
     append_data_to_json_file(r, get_current_month_and_year())
 
