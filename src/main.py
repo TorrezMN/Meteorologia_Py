@@ -97,7 +97,7 @@ def append_data_to_json_file(new_data, filename):
 
     try:
         # Open the file in reading and writing mode.
-        with open(f"data/{filename}", "r+") as f:
+        with open(f"data/{filename}.json", "r+") as f:
             # Load the existing data from the file.
             existing_data = json.load(f)
 
@@ -111,7 +111,7 @@ def append_data_to_json_file(new_data, filename):
             json.dump(existing_data, f)
     except FileNotFoundError:
         # Create the file if it does not exist.
-        with open(f"data/{filename}", "w") as f:
+        with open(f"data/{filename}.json", "w") as f:
             json.dump([new_data], f)
 
 
