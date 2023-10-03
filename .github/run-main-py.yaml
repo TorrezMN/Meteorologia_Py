@@ -1,6 +1,9 @@
-name: Run main.py every 4 days
+name: Run main.py every 4 days (Master branch only)
 
 on:
+  push:
+    branches:
+      - master
   schedule:
     - cron: "0 0 */4 *"
 
