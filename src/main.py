@@ -14,6 +14,12 @@ headers = {
 }
 
 
+def pprint_data(d):
+    """Prints nicely a dict."""
+    data = json.dumps(d, indent=4, ensure_ascii=False)
+    print(data)
+
+
 def get_current_month_and_year():
     """Returns the current month and year in the format year-month."""
     now = datetime.datetime.now()
@@ -57,6 +63,7 @@ def make_row(row):
     r["data"]["origen"] = orig[1]
     r["data"]["last_update"] = orig[2]
 
+    b = []
     for i in pron_boxes:
         r["data"]["pron_data"] = []
         box_base = i.find("div", {"class": "col-md-9 col-sm-10"})
@@ -74,8 +81,9 @@ def make_row(row):
             temps = i.text.split()
             pron_box["temperatures"][temps[0]] = temps[1]
 
-        r["data"]["pron_data"].append(pron_box)
+        b.append(pron_box)
 
+    r["data"]["pron_data"].append(b)
     #  Append data to file.
     append_data_to_json_file(r, get_current_month_and_year())
 
@@ -88,8 +96,6 @@ def parse_results():
     data = [i for i in pron[1] if len(i) == 9]
     for i in data:
         make_row(i)
-        #  print(i)
-        #  break
 
 
 def append_data_to_json_file(new_data, filename):
