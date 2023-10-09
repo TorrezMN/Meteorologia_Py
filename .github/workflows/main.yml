@@ -1,0 +1,24 @@
+name: Run main.py every 4 days (Master branch only)
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "0 0 */4 *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: pip install json requests BeautifulSoup
+      - name: Run main.py
+        run: python3 src/main.py
+
