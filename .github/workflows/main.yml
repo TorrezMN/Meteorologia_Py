@@ -19,6 +19,8 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: 3.9
+      - name: Upgrade pip
+        run:  pip install --upgrade pip
       - name: Install dependencies
         run: pip install requests BeautifulSoup
       - name: Run main.py
