@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-
+cd /home/torrezmn/Documentos/Meteorologia_Py
 
 # Get the current date and time
 DATE=$(date +%Y-%m-%d)
